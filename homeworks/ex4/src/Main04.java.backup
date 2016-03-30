@@ -1,0 +1,156 @@
+import java.util.ArrayList;
+import java.util.Scanner;
+import java.util.Stack;
+
+public class Main04
+{
+    public static void main(String args[])
+    {
+        Scanner in = new Scanner(System.in);
+        StringBuilder out = new StringBuilder();
+
+        while (in.hasNextInt())
+        {
+            int w = in.nextInt(); // Width
+            int h = in.nextInt(); // Height
+            in.nextLine();
+
+            ArrayList<Vertex> adj = new ArrayList<>(w * h);
+            Vertex startingVertex = null;
+
+            // Reads in the graph
+            char[][] graph = new char[h][w];
+            for (int i = 0; i < h; ++i)
+            {
+                String line = in.nextLine();
+                for (int j = 0; j < w; ++j)
+                {
+                    graph[i][j] = line.charAt(j);
+                    Vertex current = new Vertex(i, j, graph[i][j], 0, false, new ArrayList<>());
+                    adj.add(current);
+                    if (graph[i][j] == 'P')
+                        startingVertex = current;
+                }
+            }
+
+            // Builds the danger matrix
+            boolean[][] danger = new boolean[h][w];
+            for (int i = 0; i < h; ++i)
+            {
+                for (int j = 0; j < w; ++j)
+                {
+                    if (graph[i][j] == 'T')
+                    {
+                        danger[i][j] = true; // Trap node
+                        danger[i][j - 1] = true; // Left
+                        danger[i][j + 1] = true; // Right
+                        danger[i - 1][j] = true; // Up
+                        danger[i + 1][j] = true; // Down
+                    }
+                }
+            }
+
+            // Updates the danger matrix and builds adjacency lists
+            for (int i = 1; i < h - 1; ++i)
+            {
+                for (int j = 1; j < w - 1; ++j)
+                {
+                    Vertex current = adj.get((i * w) + j);
+                    current.isInDanger = danger[i][j];
+
+                    // Checks left
+                    if (graph[i][j - 1] != '#')
+                        current.adj.add(adj.get((i * w) + j - 1));
+
+                    // Checks right
+                    if (graph[i][j + 1] != '#')
+                        current.adj.add(adj.get((i * w) + j + 1));
+
+                    // Checks up
+                    if (graph[i - 1][j] != '#')
+                        current.adj.add(adj.get(((i - 1) * w) + j));
+
+                    // Checks down
+                    if (graph[i + 1][j] != '#')
+                        current.adj.add(adj.get(((i + 1) * w) + j));
+                }
+            }
+
+            // Testing
+//            for (int i = 0; i < h; ++i)
+//            {
+//                for (int j = 0; j < w; ++j)
+//                {
+//                    if (danger[i][j])
+//                        System.out.print("T ");
+//                    else
+//                        System.out.print("F ");
+//                    if (adj.get((i * w) + j).isInDanger)
+//                        System.out.print("T ");
+//                    else
+//                        System.out.print("F ");
+//                    System.out.print(adj.get((i * w) + j).label + " ");
+//                }
+//                System.out.println();
+//            }
+//            System.out.println("---------------------------------------------------");
+
+            // Output
+            out.append(dfs(startingVertex));
+            out.append("\n");
+        } // End of iterating through all test cases
+        System.out.print(out);
+    } // End of the main method
+
+    private static int dfs(Vertex currentVertex)
+    {
+        Stack<Vertex> stack = new Stack<>();
+        stack.push(currentVertex);
+        int gold = 0;
+
+        while (stack.size() != 0)
+        {
+            Vertex current = stack.pop();
+
+            // Returns if already visited
+            if (current.status != 0)
+                continue;
+
+            // Checks for gold to be added, since we're guarenteed to have not processed this node yet
+            if (current.label == 'G')
+                ++gold;
+
+            // Basic danger check, goes back a node if it's in danger
+            if (current.isInDanger)
+            {
+                current.status = 2;
+                continue;
+            }
+
+            // Marks node as visited and adds neighbouring nodes
+            current.status = 1;
+            for (Vertex adj : current.adj)
+                stack.push(adj);
+        }
+        return gold;
+    } // End of the dfs method
+
+    private static class Vertex
+    {
+        int y;
+        int x;
+        char label;
+        int status; // 0 = init, 1 = processing, 2 = terminated
+        boolean isInDanger;
+        ArrayList<Vertex> adj;
+
+        public Vertex(int y, int x, char label, int status, boolean isInDanger, ArrayList<Vertex> adj) {
+            this.y = y;
+            this.x = x;
+            this.label = label;
+            this.status = status;
+            this.isInDanger = isInDanger;
+            this.adj = adj;
+        } // End of the vertex constructor
+    } // End of the vertex class
+} // End of the main class

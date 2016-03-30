@@ -1,0 +1,82 @@
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Arrays;
+import java.util.StringTokenizer;
+
+public class Main02
+{
+    // Global vars
+    private static int MAX = 351; // sum(1:26)
+    private static int[][][] memo = new int[26][26][MAX];
+
+    public static void main(String args[])
+    {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringBuilder out = new StringBuilder();
+
+        // Initialises the memo array to an invalid value
+        for (int[][] row : memo)
+            for (int[] col : row)
+                Arrays.fill(col, -1);
+
+        try
+        {
+            for (int testCases = 1; true; ++testCases)
+            {
+                StringTokenizer st = new StringTokenizer(br.readLine());
+                int l = Integer.parseInt(st.nextToken()); // length
+                int s = Integer.parseInt(st.nextToken()); // target sum
+
+                // End condition check
+                if ((l == 0) && (s == 0))
+                    break;
+
+                // Sanity checks
+                if ((s > MAX) || (l > 26))
+                {
+                    String output = "Case " + testCases + ": " + 0 + "\n";
+                    out.append(output);
+                    continue;
+                }
+
+                // Output:
+                String output = "Case " + testCases + ": " + dfs(0, l, s) + "\n";
+                output = output + "------------------------------------------\n"; //TODO for testing, remove after
+                out.append(output);
+            } // End of iterating through all test cases
+        }
+        catch (IOException e)
+        {e.printStackTrace();}
+
+        System.out.print(out);
+    } // End of the main method
+
+    private static int dfs(int index, int lettersRemaining, int sum, int targetSum)
+    {
+        System.out.println("Index is: " + index + ", lettersRemaining is: " + lettersRemaining + ", sum is: " + sum);
+        // Sanity checks
+        if ((sum < 0) || (index >= 26) || ((sum != 0) && (sum < index)) || (lettersRemaining < 0))
+            return 0;
+
+        // Valid path, returns with 1
+        if ((sum == 0) && (lettersRemaining == 0))
+        {
+            memo[index][0][0] = 1;
+            System.out.println("************************************ VALID FOUND *********************************");
+            return memo[index][0][0] = 1;
+        }
+
+        // Checks if answer already exists in memo table
+        if (memo[index][lettersRemaining][sum] != -1)
+            return memo[index][lettersRemaining][sum];
+
+        memo[index][lettersRemaining][sum] = dfs(index + 1, lettersRemaining - 1, sum - index - 1)
+                + dfs(index + 1, lettersRemaining, sum);
+
+        // Goes down both available paths: letter was used added with when letter was not used
+        return memo[index][lettersRemaining][sum];
+
+        //return dfs(index + 1, lettersRemaining - 1, sum - 1) + dfs(index + 1, lettersRemaining, sum);
+    } // End of the dfs method
+} // End of the main class
