@@ -2,6 +2,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+/**
+ * UVA Question <UVA Question Number>: <UVA Question Title>
+ * Question link: <UVA Question Link>
+ * Valid solution: TODO
+ */
 public class Main01
 {
     public static void main(String args[])
