@@ -27,7 +27,7 @@ fail () {
 absRootDir="$(pwd)"
 
 # Checks if recitation symlink is already installed
-recitations_link="$absRootDir/recitations/JavaBoilerPlate"
+recitations_link="$absRootDir/recitations/JavaBoilerplate"
     if [ -d "$recitations_link" ];
     then
         info "Recitations symlink already installed"
@@ -37,7 +37,7 @@ recitations_link="$absRootDir/recitations/JavaBoilerPlate"
     fi
 
 # Checks if homework symlink is already installed
-homeworks_link="$absRootDir/homeworks/JavaBoilerPlate"
+homeworks_link="$absRootDir/homeworks/JavaBoilerplate"
     if [ -d "$homeworks_link" ];
     then
         info "Homework symlink already installed"
