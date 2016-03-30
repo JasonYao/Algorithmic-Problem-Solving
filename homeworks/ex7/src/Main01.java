@@ -3,7 +3,7 @@ import java.util.Scanner;
 
 /**
  * UVA Question 436: Arbitrage II
- * Question link:
+ * Question link: https://uva.onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&page=show_problem&problem=377
  * Valid solution: Yes
  */
 public class Main01
