@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+set -e
+
+# Compiles
+javac src/* -d output
+
+# Executes and pipes the output
+java -cp output Main < input9 > out9
+
+# Diffs to check
+diff out9 answer9
