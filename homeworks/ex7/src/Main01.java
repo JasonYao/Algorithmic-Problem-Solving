@@ -1,32 +1,33 @@
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Scanner;
 
+/**
+ * UVA Question 436: Arbitrage II
+ * Question link:
+ * Valid solution: Yes
+ */
 public class Main01
 {
+    private static final boolean IS_DEBUG_MODE = false;
+    private static final int INF = 1000000000; // use 1.10^9 to avoid overflow
 
     public static void main(String args[])
     {
         Scanner in  = new Scanner(System.in);
         StringBuilder out = new StringBuilder();
 
-        for (int caseNumber = 0; in.hasNextInt(); ++caseNumber)
+        for (int caseNumber = 1; in.hasNextInt(); ++caseNumber)
         {
-            int n = in.nextInt(); // Number of currencies
+            int n = in.nextInt(); // Number of currencies (number of nodes, V)
 
+            // Ending condition
             if (n == 0)
                 break;
 
             String[] currencies = new String[n];
             HashMap<String, Integer> map = new HashMap<>(); // Allows O(1) access to a specific currency index
-            ArrayList<ArrayList<Integer>> edgeList = new ArrayList<>();
-            for (int i = 0; i < n; ++i)
-                edgeList.add(new ArrayList<Integer>());
 
             // Reads in the currencies
-            int[][] exchange = new int[n][n]; // Adjacency matrix (can we convert to adj list?)
-
             for (int i = 0; i < n; ++i)
             {
                 String currency = in.next();
@@ -34,35 +35,61 @@ public class Main01
                 map.put(currency, i);
             }
 
-            // Reads in exchange rates
-            int m = in.nextInt(); // Number of exchange rates
+            int m = in.nextInt(); // Number of exchange rates (number of edges, E)
+
+            // Initialises the adjacency matrix for floyd warshall's All-pairs shortest path algorithm
+            double[][] adjacencyMatrix = new double[n][];
+            for (int i = 0; i < n; ++i)
+            {
+                adjacencyMatrix[i] = new double[m];
+                for (int j = 0; j < m; j++)
+                    adjacencyMatrix[i][j] = INF;
+                adjacencyMatrix[i][i] = 0;
+            }
+
+            if (IS_DEBUG_MODE)
+                test("Adjacency Matrix: Initial", adjacencyMatrix);
+
+            // Reads in exchange rates (edge weights)
             for (int i = 0; i < m; ++i)
             {
                 String source = in.next();
-                int exchangeRate = in.nextInt();
+                double exchangeRate = in.nextDouble(); // Edge weight
                 String destination = in.next();
 
                 int sourceIndex = map.get(source);
                 int destinationIndex = map.get(destination);
-                exchange[sourceIndex][destinationIndex] = exchangeRate;
-                edgeList.get(sourceIndex).add(destinationIndex);
+                adjacencyMatrix[sourceIndex][destinationIndex] = exchangeRate; // For directed graphs
             }
 
+            if (IS_DEBUG_MODE)
+                test("Adjacency Matrix: Before Floyd Warshall", adjacencyMatrix);
 
-            /**
-             * Thoughts: We can run floyd-warshal's algorithm to generate all-pairs shortest
-             *
-             * This is a classical max-flow problem. We designate the the source node to lead into each of
-             * the currencies with 1 unit of each. We then run through Edmonds–Karp's algorithm to find the maximum
-             * flow-rate of the network; If this value is > 1, then arbitrage is possible. Else, it is not.
-             */
+            // Runs through Floyd Warshall's algo
+            for (int k = 0; k < n; ++k) // O(v^3) Floyd Warshall's code is here
+                for (int i = 0; i < n; ++i)
+                    for (int j = 0; j < n; ++j)
+                        adjacencyMatrix[i][j] = Math.max(adjacencyMatrix[i][j],
+                                adjacencyMatrix[i][k] * adjacencyMatrix[k][j]);
 
-            double shortestPath = flyodWarshal(currencies, map, exchange, edgeList);
+            // Finds the maximum to determine if arbitrage is possible
+            boolean isValid = false;
+            for (int i = 0; i < n; ++i)
+            {
+                if (adjacencyMatrix[i][i] > 1)
+                {
+                    isValid = true;
+                    break; // Only need one solution
+                }
+            }
+
+            if (IS_DEBUG_MODE)
+                test("Adjacency Matrix: After Floyd Warshall", adjacencyMatrix);
 
             String outputCase = "Case " + caseNumber + ": ";
             out.append(outputCase);
             // Output
-            if (shortestPath > 1)
+            if (isValid)
                 out.append("Yes");
             else
                 out.append("No");
@@ -72,12 +99,15 @@ public class Main01
         System.out.print(out);
     } // End of the main method
 
-    private static double edmondKarp(String[] currencies, HashMap<String, Integer> map, int[][] exchange, ArrayList<ArrayList<Integer>> edgeList)
+    private static void test(String s, double[][] adjacencyMatrix)
     {
-        int n = exchange.length;
-        int[][] rc = new int[n][n]; // Residual capacity from u to v is C[u][v] - rc[u][v]
-
-
-
-    } // End of the edmond karp method to find the max flow
+        System.out.println("--------------------  Start " + s + " --------------------");
+        for (int i = 0; i < adjacencyMatrix.length; ++i)
+        {
+            for (int j = 0; j < adjacencyMatrix[i].length; ++j)
+                System.out.print(adjacencyMatrix[i][j] + " ");
+            System.out.println();
+        }
+        System.out.println("--------------------  End " + s + " --------------------");
+    } // End of test method
 } // End of the main class
