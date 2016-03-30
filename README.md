@@ -1,5 +1,5 @@
 # CSCI-UA-480: Algorithmic Problem Solving
-By Jason Yao
+By Jason Yao, [github](https://github.com/JasonYao/Algorithmic-Problem-Solving)
 
 ## Description
 An repository to store all completed homework and recitation assignments for the
