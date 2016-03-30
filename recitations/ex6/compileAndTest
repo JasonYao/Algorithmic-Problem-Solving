@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+set -e
+
+testNumber="C"
+
+# Compiles
+javac src/*.java -d output
+
+# Executes and pipes the output
+java -cp output $testNumber < testing/input/input-$testNumber > testing/output/output-$testNumber
+
+# Diffs to check
+diff testing/output/output-$testNumber testing/answer/answer-$testNumber

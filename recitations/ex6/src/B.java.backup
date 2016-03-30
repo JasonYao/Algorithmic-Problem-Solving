@@ -1,0 +1,111 @@
+import javafx.util.Pair;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.StringTokenizer;
+
+public class B
+{
+    public static void main(String args[])
+    {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringBuilder out = new StringBuilder();
+
+        // Try memo?
+        try
+        {
+            int testCases = Integer.parseInt(br.readLine());
+
+            for (int testCase = 0; testCase < testCases; ++testCase)
+            {
+                int n = Integer.parseInt(br.readLine());
+                boolean allValid = true;
+                int[] answer = new int[n];
+                HashMap<Integer, Pair<Integer, Integer>> map = new HashMap<>();
+                HashMap<Integer, Integer> isUsed = new HashMap<>();
+                boolean[] isDone = new boolean[];
+
+                // Gets ranges for each
+                for (int i = 0; i < n; ++i)
+                {
+                    StringTokenizer st = new StringTokenizer(br.readLine());
+
+                    int lowerBound = Integer.parseInt(st.nextToken());
+                    int upperBound = Integer.parseInt(st.nextToken());
+
+                    map.put(i, new Pair<>(lowerBound, upperBound));
+                } // End of getting ranges
+
+                // Fills isUsed as we go along
+                for (int i = 0; i < n; ++i)
+                {
+                    // Iterates through each p_i
+                    int p_i = map.get(i).getKey(); // lowerbound
+                    int upperBound = map.get(i).getValue();
+
+                    // Check if it exists in isUsed
+                    if (!isUsed.containsKey(p_i))
+                    {
+                        // Key is not used, adds and marks in isUsed
+                        isUsed.put(p_i, i);
+
+                        if (p_i == upperBound)
+                            isDone[i] = true;
+                    }
+                    else
+                    {
+                        // Key is used, checks to see if the used key is done
+                        if (isDone[isUsed.get(p_i)])
+                        {
+                            // key is completed, and cannot be used, increments and goes on
+
+                        }
+                        else
+                        {
+
+                        }
+                    }
+
+                    isUsed.put();
+
+                }
+
+
+
+                // Output
+                if (allValid)
+                {
+                    // Permutation found
+                    boolean isFirstTime = true;
+                    for (int i = 0; i < answer.length; ++i)
+                    {
+                        if (isFirstTime)
+                        {
+                            isFirstTime = false;
+                            out.append(answer[i]);
+                        }
+                        else
+                        {
+                            out.append(" ");
+                            out.append(answer[i]);
+                        }
+                    }
+                    out.append("\n");
+                }
+                else
+                {
+                    // Permutation not found
+                    out.append("no solution\n");
+                }
+            } // End of iterating through all test cases
+
+			System.out.print(out);
+        }
+        catch (IOException e)
+        {e.printStackTrace();}
+
+    } // End of the main method
+} // End of the main class
