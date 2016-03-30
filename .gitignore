@@ -1,2 +1,8 @@
 # OSX ignores
 .DS_Store
+
+# Java binary ignores
+*.class
+
+# IDE ignores
+.idea/
