@@ -1,13 +1,9 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.*;
-import java.util.concurrent.SynchronousQueue;
 
 /**
  * UVA Question 10330: Power Transmission
  * Question link: https://uva.onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&category=15&page=show_problem&problem=1271
- * Valid solution: TODO
+ * Valid solution: Yes
  */
 public class Main03
 {
@@ -61,16 +57,16 @@ public class Main03
 
             mf = 0;
             source = 0;
-            sink = n + 1;
+            sink = (2 * n) + 1; // We define n + 1 + node capacities as the sink index
 
-            // Sets the incoming edges
+            // Sets the incoming edges from the source
             for (int i = 0; i < b; ++i)
             {
                 int entryNodeIndex = in.nextInt();
                 capacity[source][entryNodeIndex] = INF;
             }
 
-            // We define n + 1 + node capacities as the sink index
+            // Sets the outgoing edges to the sink
             for (int i = 0; i < d; ++i)
             {
                 int exitNodeIndex = in.nextInt();
@@ -131,7 +127,7 @@ public class Main03
     private static void augment(int v, int minEdge)
     {
         // traverse the BFS spanning tree as in print_path (section 4.3)
-        if (v == source) { f = minEdge; return; } // reach the source, record minEdge in a global variable `f'
+        if (v == source) { f = minEdge;} // reach the source, record minEdge in a global variable `f'
         else if (p.get(v) != -1) { augment(p.get(v), Math.min(minEdge, capacity[p.get(v)][v])); // recursive call
             capacity[p.get(v)][v] -= f; capacity[v][p.get(v)] += f; } // alter residual capacities
     } // End of the augment method
@@ -139,14 +135,12 @@ public class Main03
     private static void test(String s)
     {
         System.out.println("--------------------  Start " + s + " --------------------");
-        for (int i = 0; i < capacity.length; ++i)
-        {
-            for (int j = 0; j < capacity[i].length; ++j)
-            {
-                if (capacity[i][j] == INF)
+        for (int[] aCapacity : capacity) {
+            for (int anACapacity : aCapacity) {
+                if (anACapacity == INF)
                     System.out.print("INF\t");
                 else
-                    System.out.print(capacity[i][j] + "\t");
+                    System.out.print(anACapacity + "\t");
             }
             System.out.println();
         }
